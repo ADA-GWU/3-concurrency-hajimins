@@ -38,10 +38,37 @@ public class Main {
             System.exit(1);
         }
     }
-    private static BufferedImage loadImage(String fileName) {
+    private static BufferedImage loadImage(String filePath) {
         try {
-            return ImageIO.read(new File(fileName));
-        } catch (IOException e) {
+            File inputFile = new File(filePath);
+            BufferedImage originalImage = ImageIO.read(inputFile);
+
+            // Get screen dimensions
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int maxWidth = (int) screenSize.getWidth();
+            int maxHeight = (int) screenSize.getHeight();
+
+            // Calculate new dimensions to fit the screen
+            int newWidth = originalImage.getWidth();
+            int newHeight = originalImage.getHeight();
+            if (originalImage.getWidth() > maxWidth) {
+                newWidth = maxWidth;
+                newHeight = (newWidth * originalImage.getHeight()) / originalImage.getWidth();
+            }
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = (newHeight * originalImage.getWidth()) / originalImage.getHeight();
+            }
+
+            // Resize the image
+            Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
+            BufferedImage resizedBufferedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics g = resizedBufferedImage.getGraphics();
+            g.drawImage(resizedImage, 0, 0, null);
+            g.dispose();
+
+            return resizedBufferedImage;
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -193,7 +220,7 @@ public class Main {
 
         // Save the resulting image to a file (you might want to change the file name)
         try {
-            File outputFile = new File("result_multi_threaded_equal_distribution_with_visualization.jpg");
+            File outputFile = new File("result.jpg");
             ImageIO.write(image, "jpg", outputFile);
         } catch (Exception e) {
             e.printStackTrace();
