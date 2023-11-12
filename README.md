@@ -6,13 +6,13 @@
 This project is a simple image processing application written in Java. It allows you to read an image, resize it to fit the computer screen, and perform multi-threaded image processing with visualization, and save the image to a file.
 
 ## How to run the program
-###1. Make sure that Java Development Kit(JDK) is installed. Simply enter java -version to check it.
-###2. Clone the repository to your local machine:
+<b>1.</b> Make sure that Java Development Kit(JDK) is installed. Simply enter java -version to check it.
+<b>2.</b>  Clone the repository to your local machine:
     ```bash
     https://github.com/ADA-GWU/3-concurrency-hajimins.git
     
-###3. Open the terminal and navigate to the directory where the project locates using cd
-###4. Compile the java file using              ###javac Main.java
-###5. Run the project with the given command. Here the arguments are name of the project, name of the image, square size, and thread mode respectively
-###java Main monalisa.jpg 5 S for single threaded
-###java Main monalisa.jpg 5 M for multi threaded
+<b>3.</b>  Open the terminal and navigate to the directory where the project locates using cd
+<b>4.</b> Compile the java file using              ###javac Main.java
+<b>5.</b> Run the project with the given command. Here the arguments are name of the project, name of the image, square size, and thread mode respectively
+<b>java Main monalisa.jpg 5 S</b> for single threaded
+<b>java Main monalisa.jpg 5 M</b> for multi threaded
