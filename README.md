@@ -6,7 +6,7 @@
 This project is a simple image processing application written in Java. It allows you to read an image, resize it to fit the computer screen, and perform multi-threaded image processing with visualization, and save the image to a file. Firstly we read the image using the command line, and choose the mode we want to raster the image and see while the process happens. Here S is used for Single Threaded processes, while M is used for Multi Threaded processes.
 
 ## How to run the program
-<b>1.</b> Make sure that Java Development Kit(JDK) is installed. Simply enter java -version to check it.
+<b>1.</b> Make sure that Java Development Kit(JDK) is installed. Simply enter <b>java -version</b> to check it.
 
 <b>2.</b>  Clone the repository to your local machine:
     git clone https://github.com/ADA-GWU/3-concurrency-hajimins.git
