@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-#Assignment2
-=======
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/YybNWfh8)
 
 
 # Assignment2 - Image Processing Project
->>>>>>> 81608a0ade342749c621f64103dc0c188620df00
-
 This project is a simple image processing application written in Java. It allows you to read an image, resize it to fit the computer screen, and perform multi-threaded image processing with visualization, and save the image to a file. Firstly we read the image using the command line, and choose the mode we want to raster the image and see while the process happens. Here S is used for Single Threaded processes, while M is used for Multi Threaded processes.
 
-<<<<<<< HEAD
-javac Main.java
-java Main monalisa.jpg 5 S
-=======
+
 ## How to run the program
 <b>1.</b> Make sure that Java Development Kit(JDK) is installed. Simply enter <b>java -version</b> to check it.
 
@@ -28,4 +19,3 @@ java Main monalisa.jpg 5 S
 <b>java Main monalisa.jpg 5 S</b> for single threaded
 
 <b>java Main monalisa.jpg 5 M</b> for multi threaded
->>>>>>> 81608a0ade342749c621f64103dc0c188620df00
