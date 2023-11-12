@@ -28,7 +28,7 @@ public class Main {
         processedImage = deepCopy(originalImage);
         displayFrame(processedImage);
 
-        // Process the image based on the given mode
+        // Process the image based on given letter
         if (processingMode == 'S') {
             processSingleThreaded(processedImage, squareSize);
         } else if (processingMode == 'M') {
@@ -43,12 +43,12 @@ public class Main {
             File inputFile = new File(filePath);
             BufferedImage originalImage = ImageIO.read(inputFile);
 
-            // Get screen dimensions
+            // Get screen dimensions for resizing the image
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             int maxWidth = (int) screenSize.getWidth();
             int maxHeight = (int) screenSize.getHeight();
 
-            // Calculate new dimensions to fit the screen
+            // Getting the height and weight for resizing
             int newWidth = originalImage.getWidth();
             int newHeight = originalImage.getHeight();
             if (originalImage.getWidth() > maxWidth) {
@@ -99,21 +99,21 @@ public class Main {
                 int squareHeight = Math.min(squareSize, height - y);
 
                 // Calculate the average color of the square
-                int totalRed = 0, totalGreen = 0, totalBlue = 0;
+                int cRed = 0, cGreen = 0, cBlue = 0;
                 for (int squareY = y; squareY < y + squareHeight; squareY++) {
                     for (int squareX = x; squareX < x + squareWidth; squareX++) {
                         Color pixelColor = new Color(image.getRGB(squareX, squareY));
-                        totalRed += pixelColor.getRed();
-                        totalGreen += pixelColor.getGreen();
-                        totalBlue += pixelColor.getBlue();
+                        cRed += pixelColor.getRed();
+                        cGreen += pixelColor.getGreen();
+                        cBlue += pixelColor.getBlue();
                     }
                 }
-                int numPixels = squareWidth * squareHeight;
-                int avgRed = totalRed / numPixels;
-                int avgGreen = totalGreen / numPixels;
-                int avgBlue = totalBlue / numPixels;
+                int nPixels = squareWidth * squareHeight;
+                int avgRed = cRed / nPixels;
+                int avgGreen = cGreen / nPixels;
+                int avgBlue = cBlue / nPixels;
 
-                // Set the color of the entire square to the average color
+                // Set the color of the square to the average color
                 Color avgColor = new Color(avgRed, avgGreen, avgBlue);
                 for (int squareY = y; squareY < y + squareHeight; squareY++) {
                     for (int squareX = x; squareX < x + squareWidth; squareX++) {
@@ -121,10 +121,9 @@ public class Main {
                     }
                 }
 
-                // Update the frame to display the modified image
                 displayFrame(image);
 
-                // Add a short delay to see the progress (adjust as needed)
+                // Add a  delay to see the progress
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -133,7 +132,7 @@ public class Main {
             }
         }
 
-        // Save the resulting image to a file (you might want to change the file name)
+        // Save the resulting image to a file
         try {
             File outputFile = new File("result.jpg");
             ImageIO.write(image, "jpg", outputFile);
@@ -171,32 +170,30 @@ public class Main {
                         int squareHeight = Math.min(squareSize, height - y);
 
                         // Calculate the average color of the square
-                        int totalRed = 0, totalGreen = 0, totalBlue = 0;
+                        int cRed = 0, cGreen = 0, cBlue = 0;
                         for (int squareY = y; squareY < y + squareHeight; squareY++) {
                             for (int squareX = startX; squareX < startX + squareWidth; squareX++) {
                                 Color pixelColor = new Color(image.getRGB(squareX, squareY));
-                                totalRed += pixelColor.getRed();
-                                totalGreen += pixelColor.getGreen();
-                                totalBlue += pixelColor.getBlue();
+                                cRed += pixelColor.getRed();
+                                cGreen += pixelColor.getGreen();
+                                cBlue += pixelColor.getBlue();
                             }
                         }
-                        int numPixels = squareWidth * squareHeight;
-                        int avgRed = totalRed / numPixels;
-                        int avgGreen = totalGreen / numPixels;
-                        int avgBlue = totalBlue / numPixels;
+                        int nPixels = squareWidth * squareHeight;
+                        int avgRed = cRed / nPixels;
+                        int avgGreen = cGreen / nPixels;
+                        int avgBlue = cBlue / nPixels;
 
-                        // Set the color of the entire square to the average color
+                        // Set the color of the  square to the average color
                         Color avgColor = new Color(avgRed, avgGreen, avgBlue);
                         for (int squareY = y; squareY < y + squareHeight; squareY++) {
                             for (int squareX = startX; squareX < startX + squareWidth; squareX++) {
                                 image.setRGB(squareX, squareY, avgColor.getRGB());
                             }
                         }
-
-                        // Update the frame to display the modified image
                         displayFrame(image);
 
-                        // Add a short delay to see the progress (adjust as needed)
+                        // Add a delay to see the progress
                         try {
                             Thread.sleep(10);
                         } catch (InterruptedException e) {
@@ -207,7 +204,7 @@ public class Main {
             }, null);
         }
 
-        // Process results as soon as they become available
+        // Process results
         for (int i = 0; i < numCores; i++) {
             try {
                 completionService.take().get();
@@ -215,10 +212,9 @@ public class Main {
                 e.printStackTrace();
             }
         }
-        // Update the frame to display the final modified image
         displayFrame(image);
 
-        // Save the resulting image to a file (you might want to change the file name)
+        // Save the resulting image to a file
         try {
             File outputFile = new File("result.jpg");
             ImageIO.write(image, "jpg", outputFile);
