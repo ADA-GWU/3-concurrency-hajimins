@@ -13,7 +13,7 @@ This project is a simple image processing application written in Java. It allows
     
 <b>3.</b>  Open the terminal and navigate to the directory where the project locates using cd.
 
-<b>4.</b> Compile the java file using              ###javac Main.java
+<b>4.</b> Compile the java file using              <b>javac Main.java</b>
 
 <b>5.</b> Run the project with the given command. Here the arguments are name of the project, name of the image, square size, and thread mode respectively.
 
