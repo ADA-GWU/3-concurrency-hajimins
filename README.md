@@ -9,7 +9,8 @@ This project is a simple image processing application written in Java. It allows
 1. Make sure that Java Development Kit(JDK) is installed. Simply enter java -version to check it.
 2. Clone the repository to your local machine:
     ```bash
-    git clone https://github.com/yourusername/image-processing-project.git
+    https://github.com/ADA-GWU/3-concurrency-hajimins.git
+    
 3. Open the terminal and navigate to the directory where the project locates using cd
 4. Compile the java file using              javac Main.java
 5. Run the project with the given command. Here the arguments are name of the project, name of the image, square size, and thread mode respectively
