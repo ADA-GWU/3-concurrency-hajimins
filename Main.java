@@ -12,20 +12,15 @@ public class Main {
     private static JFrame frame;
     private static final int FRAME_WIDTH = 800;
     private static final int FRAME_HEIGHT = 600;
-    private static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors(); // Number of available cores
+    private static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors(); // Number of cores
     private static final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     public static void main(String[] args) {
-        if (args.length != 3) {
-            System.out.println("Usage: java ImageProcessor <file_name> <square_size> <processing_mode>");
-            System.exit(1);
-        }
-
         String fileName = args[0];
         int squareSize = Integer.parseInt(args[1]);
         char processingMode = args[2].charAt(0);
 
         originalImage = loadImage(fileName);
-        processedImage = deepCopy(originalImage);
+        processedImage = copyImg(originalImage);
         displayFrame(processedImage);
 
         // Process the image based on given letter
@@ -140,14 +135,12 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println("Image processing complete. Result saved to 'result.jpg'.");
+        System.out.println("Result saved to 'result.jpg'.");
     }
     private static void processMultiThreaded(BufferedImage image, int squareSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         int numCores = Runtime.getRuntime().availableProcessors();
-
-        // Calculate the number of rows each core should process
         int rowsPerCore = height / numCores;
 
         // Using a CompletionService for managing parallel tasks
@@ -222,10 +215,10 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println("Image processing complete. Result saved to 'result_multi_threaded_equal_distribution_with_visualization.jpg'.");
+        System.out.println("Result saved to 'result.jpg'.");
         executorService.shutdown();
     }
-    private static BufferedImage deepCopy(BufferedImage bi) {
+    private static BufferedImage copyImg(BufferedImage bi) {
         BufferedImage copy = new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
         Graphics g = copy.createGraphics();
         ((Graphics2D) g).drawRenderedImage(bi, null);
