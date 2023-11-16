@@ -7,11 +7,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class Main {
-    private static BufferedImage originalImage;
-    private static BufferedImage processedImage;
+    private static BufferedImage orgImage;
+    private static BufferedImage copImage;
     private static JFrame frame;
-    private static final int FRAME_WIDTH = 800;
-    private static final int FRAME_HEIGHT = 600;
     private static final int THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors(); // Number of cores
     private static final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     public static void main(String[] args) {
@@ -19,47 +17,44 @@ public class Main {
         int squareSize = Integer.parseInt(args[1]);
         char processingMode = args[2].charAt(0);
 
-        originalImage = loadImage(fileName);
-        processedImage = copyImg(originalImage);
-        displayFrame(processedImage);
+        orgImage = loadImage(fileName);
+        copImage = copyImg(orgImage);
+        displayFrame(copImage);
 
         // Process the image based on given letter
         if (processingMode == 'S') {
-            processSingleThreaded(processedImage, squareSize);
+            singleThread(copImage, squareSize);
         } else if (processingMode == 'M') {
-            processMultiThreaded(processedImage, squareSize);
-        } else {
-            System.out.println("Invalid processing mode. Use 'S' for single-threaded or 'M' for multi-threaded.");
-            System.exit(1);
+            multiThread(copImage, squareSize);
         }
     }
     private static BufferedImage loadImage(String filePath) {
         try {
             File inputFile = new File(filePath);
-            BufferedImage originalImage = ImageIO.read(inputFile);
+            BufferedImage orgImage = ImageIO.read(inputFile);
 
             // Get screen dimensions for resizing the image
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            int maxWidth = (int) screenSize.getWidth();
-            int maxHeight = (int) screenSize.getHeight();
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            int maxWidth = (int) dim.getWidth();
+            int maxHeight = (int) dim.getHeight();
 
             // Getting the height and weight for resizing
-            int newWidth = originalImage.getWidth();
-            int newHeight = originalImage.getHeight();
-            if (originalImage.getWidth() > maxWidth) {
-                newWidth = maxWidth;
-                newHeight = (newWidth * originalImage.getHeight()) / originalImage.getWidth();
+            int nWidth = orgImage.getWidth();
+            int nHeight = orgImage.getHeight();
+            if (orgImage.getWidth() > maxWidth) {
+                nWidth = maxWidth;
+                nHeight = (nWidth * orgImage.getHeight()) / orgImage.getWidth();
             }
-            if (newHeight > maxHeight) {
-                newHeight = maxHeight;
-                newWidth = (newHeight * originalImage.getWidth()) / originalImage.getHeight();
+            if (nHeight > maxHeight) {
+                nHeight = maxHeight;
+                nWidth = (nHeight * orgImage.getWidth()) / orgImage.getHeight();
             }
 
             // Resize the image
-            Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
-            BufferedImage resizedBufferedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+            Image resImage = orgImage.getScaledInstance(nWidth, nHeight, Image.SCALE_DEFAULT);
+            BufferedImage resizedBufferedImage = new BufferedImage(nWidth, nHeight, BufferedImage.TYPE_INT_RGB);
             Graphics g = resizedBufferedImage.getGraphics();
-            g.drawImage(resizedImage, 0, 0, null);
+            g.drawImage(resImage, 0, 0, null);
             g.dispose();
 
             return resizedBufferedImage;
@@ -67,6 +62,13 @@ public class Main {
             e.printStackTrace();
             return null;
         }
+    }
+    private static BufferedImage copyImg(BufferedImage bi) {
+        BufferedImage copImg = new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+        Graphics g = copImg.createGraphics();
+        ((Graphics2D) g).drawRenderedImage(bi, null);
+        g.dispose();
+        return copImg;
     }
     private static void displayFrame(BufferedImage image) {
         if (frame == null) {
@@ -83,36 +85,36 @@ public class Main {
             frame.repaint();
         }
     }
-    private static void processSingleThreaded(BufferedImage image, int squareSize) {
+    private static void singleThread(BufferedImage image, int squareSize) {
         int width = image.getWidth();
         int height = image.getHeight();
 
         for (int y = 0; y < height; y += squareSize) {
             for (int x = 0; x < width; x += squareSize) {
                 // Calculate the bounds of the square
-                int squareWidth = Math.min(squareSize, width - x);
-                int squareHeight = Math.min(squareSize, height - y);
+                int sWidth = Math.min(squareSize, width - x);
+                int sHeight = Math.min(squareSize, height - y);
 
                 // Calculate the average color of the square
                 int cRed = 0, cGreen = 0, cBlue = 0;
-                for (int squareY = y; squareY < y + squareHeight; squareY++) {
-                    for (int squareX = x; squareX < x + squareWidth; squareX++) {
-                        Color pixelColor = new Color(image.getRGB(squareX, squareY));
+                for (int sY = y; sY < y + sHeight; sY++) {
+                    for (int sX = x; sX < x + sWidth; sX++) {
+                        Color pixelColor = new Color(image.getRGB(sX, sY));
                         cRed += pixelColor.getRed();
                         cGreen += pixelColor.getGreen();
                         cBlue += pixelColor.getBlue();
                     }
                 }
-                int nPixels = squareWidth * squareHeight;
+                int nPixels = sWidth * sHeight;
                 int avgRed = cRed / nPixels;
                 int avgGreen = cGreen / nPixels;
                 int avgBlue = cBlue / nPixels;
 
                 // Set the color of the square to the average color
-                Color avgColor = new Color(avgRed, avgGreen, avgBlue);
-                for (int squareY = y; squareY < y + squareHeight; squareY++) {
-                    for (int squareX = x; squareX < x + squareWidth; squareX++) {
-                        image.setRGB(squareX, squareY, avgColor.getRGB());
+                Color avColor = new Color(avgRed, avgGreen, avgBlue);
+                for (int sY = y; sY < y + sHeight; sY++) {
+                    for (int sX = x; sX < x + sWidth; sX++) {
+                        image.setRGB(sX, sY, avColor.getRGB());
                     }
                 }
 
@@ -134,10 +136,8 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("Result saved to 'result.jpg'.");
     }
-    private static void processMultiThreaded(BufferedImage image, int squareSize) {
+    private static void multiThread(BufferedImage image, int squareSize) {
         int width = image.getWidth();
         int height = image.getHeight();
         int numCores = Runtime.getRuntime().availableProcessors();
@@ -159,29 +159,29 @@ public class Main {
                         int startX = x;
 
                         // Calculate the bounds of the square
-                        int squareWidth = Math.min(squareSize, width - startX);
-                        int squareHeight = Math.min(squareSize, height - y);
+                        int sWidth = Math.min(squareSize, width - startX);
+                        int sHeight = Math.min(squareSize, height - y);
 
                         // Calculate the average color of the square
                         int cRed = 0, cGreen = 0, cBlue = 0;
-                        for (int squareY = y; squareY < y + squareHeight; squareY++) {
-                            for (int squareX = startX; squareX < startX + squareWidth; squareX++) {
-                                Color pixelColor = new Color(image.getRGB(squareX, squareY));
+                        for (int sY = y; sY < y + sHeight; sY++) {
+                            for (int sX = startX; sX < startX + sWidth; sX++) {
+                                Color pixelColor = new Color(image.getRGB(sX, sY));
                                 cRed += pixelColor.getRed();
                                 cGreen += pixelColor.getGreen();
                                 cBlue += pixelColor.getBlue();
                             }
                         }
-                        int nPixels = squareWidth * squareHeight;
+                        int nPixels = sWidth * sHeight;
                         int avgRed = cRed / nPixels;
                         int avgGreen = cGreen / nPixels;
                         int avgBlue = cBlue / nPixels;
 
                         // Set the color of the  square to the average color
-                        Color avgColor = new Color(avgRed, avgGreen, avgBlue);
-                        for (int squareY = y; squareY < y + squareHeight; squareY++) {
-                            for (int squareX = startX; squareX < startX + squareWidth; squareX++) {
-                                image.setRGB(squareX, squareY, avgColor.getRGB());
+                        Color avColor = new Color(avgRed, avgGreen, avgBlue);
+                        for (int sY = y; sY < y + sHeight; sY++) {
+                            for (int sX = startX; sX < startX + sWidth; sX++) {
+                                image.setRGB(sX, sY, avColor.getRGB());
                             }
                         }
                         displayFrame(image);
@@ -214,15 +214,6 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("Result saved to 'result.jpg'.");
         executorService.shutdown();
-    }
-    private static BufferedImage copyImg(BufferedImage bi) {
-        BufferedImage copy = new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
-        Graphics g = copy.createGraphics();
-        ((Graphics2D) g).drawRenderedImage(bi, null);
-        g.dispose();
-        return copy;
     }
 }
